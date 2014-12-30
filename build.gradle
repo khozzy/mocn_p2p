@@ -8,10 +8,17 @@ dependencies {
     compile files('lib/cplex.jar')
 }
 
+jar {
+    manifest {
+        attributes("Main-Class": "com.pwr.Main")
+    }
+}
+
 task wrapper(type: Wrapper) {
     gradleVersion = "2.1"
 }
 
-run {
+run.doFirst() {
+    logger.quiet("Setting system property ...")
     systemProperty("java.library.path", "lib/x86-64_osx")
 }
