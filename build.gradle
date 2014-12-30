@@ -1,1 +1,9 @@
 apply plugin: 'java'
+apply plugin: 'application'
+
+sourceSets.main.java.srcDirs = ['src']
+mainClassName = "com/pwr/Main"
+
+task wrapper(type: Wrapper) {
+    gradleVersion = "2.1"
+}
