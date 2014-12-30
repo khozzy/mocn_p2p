@@ -4,6 +4,14 @@ apply plugin: 'application'
 sourceSets.main.java.srcDirs = ['src']
 mainClassName = "com/pwr/Main"
 
+dependencies {
+    compile files('lib/cplex.jar')
+}
+
 task wrapper(type: Wrapper) {
     gradleVersion = "2.1"
+}
+
+run {
+    systemProperty("java.library.path", "lib/x86-64_osx")
 }
