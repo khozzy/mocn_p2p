@@ -20,5 +20,5 @@ task wrapper(type: Wrapper) {
 
 run.doFirst() {
     logger.quiet("Setting system property ...")
-    systemProperty("java.library.path", "lib/x86-64_osx")
+    systemProperty("java.library.path", "/Users/khozzy/Applications/IBM/ILOG/CPLEX_Studio_Preview1261/cplex/bin/x86-64_osx")
 }
