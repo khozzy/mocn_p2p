@@ -2,6 +2,7 @@ package com.pwr;
 
 import ilog.concert.IloException;
 import ilog.concert.IloLinearNumExpr;
+import ilog.concert.IloNumExpr;
 import ilog.concert.IloNumVar;
 import ilog.concert.IloSemiContVar;
 import ilog.cplex.IloCplex;
@@ -12,6 +13,9 @@ public class Main {
 
         System.out.println("Welcome. I'm your wizard in the dark lands of P2P networks...");
         System.out.println("State your problem, mortal ...");
+
+        Simulation simulation = new Simulation();
+        simulation.start();
 
         /**
          * Solving the following example
@@ -36,8 +40,12 @@ public class Main {
             double[] ub = {40.0, Double.MAX_VALUE, Double.MAX_VALUE};
             IloNumVar[] x = cplex.numVarArray(3, lb, ub);
 
-            double[] objvals = {1.0, 2.0, 3.0};
-            cplex.addMaximize(cplex.scalProd(x, objvals));
+            IloLinearNumExpr objective = cplex.linearNumExpr();
+            objective.addTerm(1.0, x[0]);
+            objective.addTerm(2.0, x[1]);
+            objective.addTerm(3.0, x[2]);
+
+            cplex.addMaximize(objective);
 
             cplex.addLe(cplex.sum(
                     cplex.prod(-1.0, x[0]),
