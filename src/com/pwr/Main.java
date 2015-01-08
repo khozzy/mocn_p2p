@@ -4,6 +4,8 @@ import ilog.concert.*;
 import ilog.cplex.IloCplex;
 import sun.nio.ch.Net;
 
+import java.util.Arrays;
+
 public class Main {
 
     public static void main(String[] args) {
@@ -21,9 +23,10 @@ public class Main {
         //g_bv - czy node posiada blok przed startem czy nie
         boolean[][] g = new boolean[BLOCKS_TO_TRANSFER][NODES];
         //w naszym wypadku każdy blok ma jednego initial seeda
+        int initNode = 0;
         for(int b = 0; b < BLOCKS_TO_TRANSFER; b++)
         {
-            int initNode = Utils.randInt(0, NODES - 1);
+            initNode = Utils.randInt(0, NODES - 1);
             g[b][initNode] = true;
         }
 
@@ -179,8 +182,12 @@ public class Main {
                     }
                 }
 
-                cplex.output().println("Solution found: " + solution[0][0][0][0]);
-
+                cplex.output().println("Block initially in node: " +initNode);
+                
+                for(int w = 0; w < NODES; w++) {
+                    cplex.output().println("Transfer from=" + w + " ?" + Arrays.deepToString(solution[0][w]));
+                }
+                
                 cplex.end();
             }
 

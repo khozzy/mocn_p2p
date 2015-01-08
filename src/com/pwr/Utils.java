@@ -4,7 +4,7 @@ import java.util.Random;
 
 public class Utils {
 
-    private static final long SEED = 12345;
+    private static final long SEED = System.currentTimeMillis();
     private static Random random = new Random(SEED);
 
     public static int randInt(int min, int max) {
