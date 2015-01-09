@@ -4,6 +4,7 @@ import ilog.concert.*;
 import ilog.cplex.IloCplex;
 import sun.nio.ch.Net;
 
+import java.awt.*;
 import java.util.Arrays;
 
 public class Main {
@@ -15,19 +16,19 @@ public class Main {
 
         final int NODES = 5;
         final int BLOCKS_TO_TRANSFER = 1;
-        final int MAX_TIME = 15;
-        final int M = 12;
+        final int MAX_TIME = 2;
+        final int M = 6;
 
-        double[][][][] solution = new double[BLOCKS_TO_TRANSFER][NODES][NODES][MAX_TIME];
+       final double[][][][] solution = new double[BLOCKS_TO_TRANSFER][NODES][NODES][MAX_TIME];
 
         //g_bv - czy node posiada blok przed startem czy nie
         boolean[][] g = new boolean[BLOCKS_TO_TRANSFER][NODES];
         //w naszym wypadku każdy blok ma jednego initial seeda
-        int initNode = 0;
+        int initNode [] = new int[BLOCKS_TO_TRANSFER];
         for(int b = 0; b < BLOCKS_TO_TRANSFER; b++)
         {
-            initNode = Utils.randInt(0, NODES - 1);
-            g[b][initNode] = true;
+            initNode[b] = Utils.randInt(0, NODES - 1);
+            g[b][initNode[b]] = true;
         }
 
         /*Simulation simulation = new Simulation();
@@ -182,10 +183,19 @@ public class Main {
                     }
                 }
 
-                cplex.output().println("Block initially in node: " +initNode);
-                
-                for(int w = 0; w < NODES; w++) {
-                    cplex.output().println("Transfer from=" + w + " ?" + Arrays.deepToString(solution[0][w]));
+                network.displayNodeInfo();
+                for(int b=0;b<BLOCKS_TO_TRANSFER;b++){
+                    cplex.output().println("Block="+b+" initially in node: "+initNode[b]);
+                    for(int t=0;t<MAX_TIME;t++){
+                        for(int w=0;w<NODES;w++){
+                            for(int v=0;v<NODES;v++){
+                                if(Math.round(solution[b][w][v][t]) ==1) {
+                                    cplex.output().println("Block="+b+" in iteration="+t+" transferred from node w="
+                                    +w+" to node v="+v);
+                                }
+                            }
+                        }
+                    }
                 }
                 
                 cplex.end();
