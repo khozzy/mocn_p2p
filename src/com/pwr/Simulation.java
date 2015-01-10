@@ -6,12 +6,17 @@ import ilog.concert.IloLinearNumExpr;
 import ilog.concert.IloNumVar;
 import ilog.cplex.IloCplex;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Simulation {
 
     final int NODES;
     final int BLOCKS_TO_TRANSFER;
     final int MAX_TIME;
     final int M;
+
+    final int RUN_NUMBER = 50;
 
     public Simulation(SimulationProperty properties) {
         NODES = properties.getNodes();
@@ -21,6 +26,33 @@ public class Simulation {
     }
 
     public double run() throws IloException {
+        System.out.println(
+                String.format(
+                        "****** Running simulation ******\n" +
+                                "NODES: %d, " +
+                                "BLOCKS TO TRANSFER: %d, " +
+                                "MAXIMUM TIME: %d, " +
+                                "M: %d\n", NODES, BLOCKS_TO_TRANSFER, MAX_TIME, M));
+
+        List<Double> allResults = new ArrayList<>();
+
+        for (int i = 0; i < RUN_NUMBER; i++) {
+            allResults.add(calculate());
+        }
+
+        double averagedResult = allResults
+                .stream()
+                .mapToDouble(Double::doubleValue)
+                .average()
+                .getAsDouble();
+
+        System.out.println("Averaged result: " + averagedResult);
+        System.out.println("****** FINISH ******");
+
+        return averagedResult;
+    }
+
+    private double calculate() throws IloException {
 
         double objValue = 0.0;
         final double[][][][] solution = new double[BLOCKS_TO_TRANSFER][NODES][NODES][MAX_TIME];

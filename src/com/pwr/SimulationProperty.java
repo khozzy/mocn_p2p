@@ -7,6 +7,8 @@ public class SimulationProperty {
     private final int maxTime;
     private final int m;
 
+    private double averagedObjectiveValue; // averaged result of the simulation
+
     public SimulationProperty(int nodes, int blocksToTransfer, int maxTime, int m) {
         this.nodes = nodes;
         this.blocksToTransfer = blocksToTransfer;
@@ -28,5 +30,13 @@ public class SimulationProperty {
 
     public int getM() {
         return m;
+    }
+
+    public double getAveragedObjectiveValue() {
+        return averagedObjectiveValue;
+    }
+
+    public void setAveragedObjectiveValue(double averagedObjectiveValue) {
+        this.averagedObjectiveValue = averagedObjectiveValue;
     }
 }
