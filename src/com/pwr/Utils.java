@@ -19,11 +19,15 @@ public class Utils {
 
     /**
      * File has the following format:
-     * nodes_number;blocks_to_transfer;max_time;large_number
+     * type;nodes_number;blocks_to_transfer;max_time;large_number
+     *
+     * Type is either
+     * - "c" for cost
+     * - "t" for time
      *
      * Example:
-     * 5;1;5;9
-     * 5;2;5;9
+     * c;5;1;5;9
+     * c;5;2;5;9
      */
     public static List<SimulationProperty> readPropertiesFromFile(Path inputFile) throws IOException {
         List<SimulationProperty> properties = new ArrayList<>();
@@ -34,10 +38,11 @@ public class Utils {
                     String params[] = line.split(";");
 
                     SimulationProperty property = new SimulationProperty(
-                            Integer.valueOf(params[0]),
+                            params[0],
                             Integer.valueOf(params[1]),
                             Integer.valueOf(params[2]),
-                            Integer.valueOf(params[3]));
+                            Integer.valueOf(params[3]),
+                            Integer.valueOf(params[4]));
 
                     properties.add(property);
                 });
@@ -50,13 +55,15 @@ public class Utils {
      * nodes_number;blocks_to_transfer;max_time;large_number;averaged_result
      *
      * Example:
-     * 5;1;5;9;6.7
-     * 5;2;5;9;11.8
+     * c;5;1;5;9;6.7
+     * c;5;2;5;9;11.8
      */
     public static void storeSimulationResults(Path outputFile, List<SimulationProperty> results) throws IOException {
         StringBuilder content = new StringBuilder();
 
         results.stream().forEach(property -> {
+            content.append(property.getType());
+            content.append(";");
             content.append(property.getNodes());
             content.append(";");
             content.append(property.getBlocksToTransfer());

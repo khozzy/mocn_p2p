@@ -12,14 +12,16 @@ import java.util.List;
 
 public class Simulation {
 
+    final String OPTIMIZATION_TYPE;
     final int NODES;
     final int BLOCKS_TO_TRANSFER;
     final int MAX_TIME;
     final int M;
 
-    final int RUN_NUMBER = 10;
+    final int RUN_NUMBER = 50;
 
     public Simulation(SimulationProperty properties) {
+        OPTIMIZATION_TYPE = properties.getType();
         NODES = properties.getNodes();
         BLOCKS_TO_TRANSFER = properties.getBlocksToTransfer();
         MAX_TIME = properties.getMaxTime();
