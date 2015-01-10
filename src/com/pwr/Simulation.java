@@ -5,6 +5,7 @@ import ilog.concert.IloIntExpr;
 import ilog.concert.IloLinearNumExpr;
 import ilog.concert.IloNumVar;
 import ilog.cplex.IloCplex;
+import org.apache.commons.io.output.NullOutputStream;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +17,7 @@ public class Simulation {
     final int MAX_TIME;
     final int M;
 
-    final int RUN_NUMBER = 50;
+    final int RUN_NUMBER = 10;
 
     public Simulation(SimulationProperty properties) {
         NODES = properties.getNodes();
@@ -67,6 +68,7 @@ public class Simulation {
         }
 
         IloCplex cplex = new IloCplex();
+        cplex.setOut(new NullOutputStream()); // it will quiet cplex output
 
         Network network = new Network(NODES);
 
@@ -168,10 +170,6 @@ public class Simulation {
 
             objValue = cplex.getObjValue();
 
-            cplex.output().println("Solution status: " + cplex.getStatus());
-            cplex.output().println("Solution value: " + objValue);
-
-
             for (int b = 0; b < BLOCKS_TO_TRANSFER; b++) {
                 for (int w = 0; w < NODES; w++) {
                     for (int v = 0; v < NODES; v++) {
@@ -180,7 +178,7 @@ public class Simulation {
                 }
             }
 
-            network.displayNodeInfo();
+            //network.displayNodeInfo();
             for (int b = 0; b < BLOCKS_TO_TRANSFER; b++) {
                 cplex.output().println("Block=" + b + " initially in node: " + initNode[b]);
                 for (int t = 0; t < MAX_TIME; t++) {
