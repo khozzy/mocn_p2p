@@ -8,12 +8,19 @@ import ilog.cplex.IloCplex;
 
 public class Simulation {
 
-    public double run() throws IloException {
+    final int NODES;
+    final int BLOCKS_TO_TRANSFER;
+    final int MAX_TIME;
+    final int M;
 
-        final int NODES = 5;
-        final int BLOCKS_TO_TRANSFER = 1;
-        final int MAX_TIME = 2;
-        final int M = 6;
+    public Simulation(SimulationProperty properties) {
+        NODES = properties.getNodes();
+        BLOCKS_TO_TRANSFER = properties.getBlocksToTransfer();
+        MAX_TIME = properties.getMaxTime();
+        M = properties.getM();
+    }
+
+    public double run() throws IloException {
 
         double objValue = 0.0;
         final double[][][][] solution = new double[BLOCKS_TO_TRANSFER][NODES][NODES][MAX_TIME];

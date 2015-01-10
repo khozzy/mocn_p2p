@@ -6,7 +6,8 @@ public class Main {
 
     public static void main(String[] args) {
 
-        Simulation simulation = new Simulation();
+        SimulationProperty property = new SimulationProperty(5, 2, 5, 9);
+        Simulation simulation = new Simulation(property);
 
         try {
             System.out.println("Calculated objective value: " + simulation.run());
