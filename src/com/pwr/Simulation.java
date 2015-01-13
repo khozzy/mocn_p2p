@@ -1,9 +1,6 @@
 package com.pwr;
 
-import ilog.concert.IloException;
-import ilog.concert.IloIntExpr;
-import ilog.concert.IloLinearNumExpr;
-import ilog.concert.IloNumVar;
+import ilog.concert.*;
 import ilog.cplex.IloCplex;
 import org.apache.commons.io.output.NullOutputStream;
 
@@ -84,20 +81,48 @@ public class Simulation {
             }
         }
 
-        //Objective function
-        IloLinearNumExpr objectiveFunction = cplex.linearNumExpr();
-        for (int b = 0; b < BLOCKS_TO_TRANSFER; b++) {
-            for (int w = 0; w < NODES; w++) {
-                for (int v = 0; v < NODES; v++) {
-                    for (int t = 0; t < MAX_TIME; t++) {
-                        //suma iloczynów kosztu transferu z node w do v i zmiennej y okreslajacej czy
-                        //w danej iteracji byl transfer danego bloku z node w do v czy nie
-                        objectiveFunction.addTerm(network.getCost(w, v), y[b][w][v][t]);
+        
+        if(OPTIMIZATION_TYPE.contentEquals("c")) {
+            //Objective function
+            IloLinearNumExpr objectiveFunction = cplex.linearNumExpr();
+            for (int b = 0; b < BLOCKS_TO_TRANSFER; b++) {
+                for (int w = 0; w < NODES; w++) {
+                    for (int v = 0; v < NODES; v++) {
+                        for (int t = 0; t < MAX_TIME; t++) {
+                            //suma iloczynów kosztu transferu z node w do v i zmiennej y okreslajacej czy
+                            //w danej iteracji byl transfer danego bloku z node w do v czy nie
+                            objectiveFunction.addTerm(network.getCost(w, v), y[b][w][v][t]);
+                        }
                     }
                 }
             }
+            cplex.addMinimize(objectiveFunction);
         }
-        cplex.addMinimize(objectiveFunction);
+
+       else if(OPTIMIZATION_TYPE.contentEquals("t")) {
+            //x_t variable - tylko kiedy optymalizujemy ilość iteracji
+            IloIntVar[] x = cplex.boolVarArray(MAX_TIME);
+
+            //Objective function - time optimization
+            IloLinearNumExpr objectiveFunction = cplex.linearNumExpr();
+            for(int t = 0; t < MAX_TIME; t++) {
+                objectiveFunction.addTerm(1, x[t]);
+            }
+            cplex.addMinimize(objectiveFunction);
+
+            //warunek 5- tylko jak optymalizujemy czas
+            for(int t = 0; t < MAX_TIME; t++) {
+                IloLinearNumExpr sumOfY_bwvtOver_bwv = cplex.linearNumExpr();
+                for(int b = 0; b < BLOCKS_TO_TRANSFER; b++) {
+                    for (int w = 0; w < NODES; w++) {
+                        for (int v = 0; v < NODES; v++) {
+                            sumOfY_bwvtOver_bwv.addTerm(1, y[b][w][v][t]);
+                        }
+                    }
+                }
+                cplex.addLe(sumOfY_bwvtOver_bwv,cplex.prod(M,x[t]));
+            }
+        }
 
         //warunek 1 - wszystkie node'y muszą otrzymać pakiet - chyba dobrze
         for (int b = 0; b < BLOCKS_TO_TRANSFER; b++) {
