@@ -52,7 +52,7 @@ public class Utils {
 
     /**
      * File has the following format:
-     * nodes_number;blocks_to_transfer;max_time;large_number;averaged_result
+     * type;nodes_number;blocks_to_transfer;max_time;large_number;averaged_result
      *
      * Example:
      * c;5;1;5;9;6.7
