@@ -6,6 +6,7 @@ import org.apache.commons.io.output.NullOutputStream;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class Simulation {
 
@@ -39,12 +40,17 @@ public class Simulation {
         for (int i = 0; i < RUN_NUMBER; i++) {
             allResults.add(calculate());
         }
-
-        double averagedResult = allResults
-                .stream()
-                .mapToDouble(Double::doubleValue)
-                .average()
-                .getAsDouble();
+        double averagedResult=Double.NaN;
+        try {
+            averagedResult = allResults
+                    .stream()
+                    .mapToDouble(Double::doubleValue)
+                    .filter(a->!Double.isNaN(a))
+                    .average()
+                    .getAsDouble();
+        }
+        catch (NoSuchElementException e){
+        }
 
         System.out.println("Averaged result: " + averagedResult);
         System.out.println("****** FINISH ******");
@@ -54,7 +60,7 @@ public class Simulation {
 
     private double calculate() throws IloException {
 
-        double objValue = 0.0;
+        double objValue = Double.NaN;
         final double[][][][] solution = new double[BLOCKS_TO_TRANSFER][NODES][NODES][MAX_TIME];
 
         //g_bv - czy node posiada blok przed startem czy nie
